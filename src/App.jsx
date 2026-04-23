@@ -198,19 +198,20 @@ const Input = ({ className, ...props }) => (
 );
 
 const shortcutOptions = [
-  { id: "understand", title: "Explain the problem", description: "Use this when the question itself feels unclear.", icon: BookOpen, color: "bg-blue-50 border-blue-200" },
-  { id: "knowledge", title: "Choose a method", description: "Use this when you need to know what math idea fits.", icon: Brain, color: "bg-violet-50 border-violet-200" },
-  { id: "work", title: "Continue my work", description: "Use this when you have a start or one step is blocking you.", icon: Lightbulb, color: "bg-amber-50 border-amber-200" },
-  { id: "example", title: "See a related example", description: "Use this to compare with a similar problem.", icon: Search, color: "bg-emerald-50 border-emerald-200" },
-  { id: "answer", title: "Reveal staged answer", description: "Use this when you want hint, outline, worked steps, or final answer.", icon: FileText, color: "bg-slate-50 border-slate-200" },
-  { id: "wrong", title: "Fix my attempt", description: "Use this when your work went wrong and you want to repair it.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
+  { id: "understand", title: "Understand the problem", description: "Use this when the wording, notation, or goal of the problem feels unclear.", icon: BookOpen, color: "bg-blue-50 border-blue-200" },
+  { id: "knowledge", title: "Review relevant knowledge", description: "Use this to view the concepts and methods most relevant to this problem.", icon: Brain, color: "bg-violet-50 border-violet-200" },
+  { id: "work", title: "Continue my work", description: "Use this when you have started and want help with the next step.", icon: Lightbulb, color: "bg-amber-50 border-amber-200" },
+  { id: "example", title: "See a similar example", description: "Use this to compare with a worked example that uses the same idea.", icon: Search, color: "bg-emerald-50 border-emerald-200" },
+  { id: "answer", title: "Reveal the answer in stages", description: "Use this when you want a hint, an outline, worked steps, or the final answer.", icon: FileText, color: "bg-slate-50 border-slate-200" },
+  { id: "wrong", title: "Fix my attempt", description: "Use this when you want to find the first mistake and repair your work.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
 ];
 
 const sampleProblem = "Evaluate $\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx$.";
 
 const sampleAnalysis = {
-  topic: "Rational function integration",
-  grade: "High school / introductory calculus",
+  topic: "Integration",
+  subtopic: "Partial Fraction",
+  grade: "Calculus",
   concepts: [
     "Degree comparison",
     "Polynomial division",
@@ -353,6 +354,9 @@ function AnalyzeStage({ onNext, onBack }) {
                   {sampleAnalysis.topic}
                 </Badge>
                 <Badge className="rounded-full" variant="outline">
+                  {sampleAnalysis.subtopic}
+                </Badge>
+                <Badge className="rounded-full" variant="outline">
                   {sampleAnalysis.grade}
                 </Badge>
               </div>
@@ -453,7 +457,7 @@ function SupportStage({ selected, onBack, onStartOver }) {
     switch (selected) {
       case "understand":
         return {
-          title: "Explain the problem",
+          title: "Understand the problem",
           left: <MathPreviewInput value={studentWork} onChange={setStudentWork} placeholder="Type the words, symbols, or parts of the question that feel unclear." label="My confusion" helper="Use this space to name what you do not understand yet." />,
           messages: [
             { role: "user", text: `I'm looking at: ${sampleProblem}. I don't quite get what to do.` },
@@ -464,7 +468,7 @@ function SupportStage({ selected, onBack, onStartOver }) {
         };
       case "knowledge":
         return {
-          title: "Choose a method",
+          title: "Review relevant knowledge",
           left: (
             <div className="space-y-4">
               <div>
@@ -501,7 +505,7 @@ function SupportStage({ selected, onBack, onStartOver }) {
         };
       case "example":
         return {
-          title: "See a related example",
+          title: "See a similar example",
           left: (
             <div className="space-y-4">
               <div>
@@ -520,7 +524,7 @@ function SupportStage({ selected, onBack, onStartOver }) {
         };
       case "answer":
         return {
-          title: "Reveal staged answer",
+          title: "Reveal the answer in stages",
           left: (
             <div className="space-y-4">
               <div>
