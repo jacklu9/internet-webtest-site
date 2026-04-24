@@ -6,7 +6,6 @@ import {
   BookOpen,
   Lightbulb,
   CheckCircle2,
-  Search,
   FileText,
   ArrowLeft,
   ChevronRight,
@@ -201,12 +200,14 @@ const shortcutOptions = [
   { id: "understand", title: "Understand the problem", description: "Use this when the wording, notation, or goal of the problem feels unclear.", icon: BookOpen, color: "bg-blue-50 border-blue-200" },
   { id: "knowledge", title: "Review relevant knowledge", description: "Use this to view the concepts and methods most relevant to this problem.", icon: Brain, color: "bg-violet-50 border-violet-200" },
   { id: "work", title: "Continue my work", description: "Use this when you have started and want help with the next step.", icon: Lightbulb, color: "bg-amber-50 border-amber-200" },
-  { id: "example", title: "See a similar example", description: "Use this to compare with a worked example that uses the same idea.", icon: Search, color: "bg-emerald-50 border-emerald-200" },
+  { id: "practice", title: "Try another question", description: "Use this to get a related practice question.", icon: CheckCircle2, color: "bg-emerald-50 border-emerald-200" },
   { id: "answer", title: "Reveal the answer in stages", description: "Use this when you want a hint, an outline, worked steps, or the final answer.", icon: FileText, color: "bg-slate-50 border-slate-200" },
   { id: "wrong", title: "Find my mistake", description: "Use this when you know your answer is wrong and want help finding where your work first went off track.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
 ];
 
 const sampleProblem = "Evaluate $\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx$.";
+const practiceProblem = "Evaluate $\\int \\frac{x+5}{x(x+2)} \\, dx$.";
+const practiceSolution = "Solution:\n$$\\frac{x+5}{x(x+2)}=\\frac{A}{x}+\\frac{B}{x+2}$$\nClear denominators:\n$$x+5=A(x+2)+Bx$$\nMatch coefficients:\n$$A+B=1,\\quad 2A=5$$\nSo:\n$$A=\\frac{5}{2},\\quad B=-\\frac{3}{2}$$\nIntegrate term by term:\n$$\\int \\frac{x+5}{x(x+2)}\\,dx=\\frac{5}{2}\\ln|x|-\\frac{3}{2}\\ln|x+2|+C$$";
 
 const sampleAnalysis = {
   topic: "Integration",
@@ -283,10 +284,10 @@ function UploadStage({ onNext, problemText, setProblemText }) {
           />
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-xs text-neutral-500">
-              {problemText.trim() ? "Ready to prepare support for this problem." : "Enter a problem before continuing."}
+              {problemText.trim() ? "Ready to start with this problem." : "Enter a problem before continuing."}
             </p>
             <Button className="rounded-2xl" onClick={onNext} disabled={!problemText.trim()}>
-              Prepare support
+              Start
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -330,7 +331,7 @@ function AnalyzeStage({ onNext, onBack }) {
     <div className="mx-auto max-w-3xl">
       <Card className="rounded-3xl shadow-sm">
         <CardHeader>
-            <CardTitle>2. Prepare learning support</CardTitle>
+            <CardTitle>2. Start</CardTitle>
             <p className="text-sm text-neutral-500">
               Checking the problem structure and useful math ideas.
             </p>
@@ -338,12 +339,12 @@ function AnalyzeStage({ onNext, onBack }) {
         <CardContent className="space-y-5">
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="font-medium">Preparing support choices</span>
+              <span className="font-medium">Starting tutor support</span>
               <span className="text-neutral-500">{progress}%</span>
             </div>
             <Progress value={progress} className="h-3" />
             <p className="mt-2 text-xs text-neutral-500">
-              {progress < 100 ? "Reviewing the problem." : "Ready for the next step."}
+              {progress < 100 ? "Reviewing the problem." : "Ready to choose help."}
             </p>
           </div>
           <div className="space-y-3 text-sm">
@@ -438,9 +439,11 @@ function OptionsStage({ onBack, onSelect }) {
 function SupportStage({ selected, onBack, onStartOver }) {
   const [answerLevel, setAnswerLevel] = useState("hint");
   const [studentWork, setStudentWork] = useState("");
+  const [showPracticeSolution, setShowPracticeSolution] = useState(false);
   
   // Initial setup for different support paths
   useEffect(() => {
+    setShowPracticeSolution(false);
     switch (selected) {
       case "work":
         setStudentWork(
@@ -513,24 +516,28 @@ function SupportStage({ selected, onBack, onStartOver }) {
             { role: "assistant", text: "Now ask yourself: what similar logarithm rule should apply to $\\frac{1}{x+1}$?" },
           ]
         };
-      case "example":
+      case "practice":
         return {
-          title: "See a similar example",
+          title: "Try another question",
           left: (
             <div className="space-y-4">
               <div>
-                <div className="text-xs font-bold uppercase tracking-wider text-neutral-400">Your problem</div>
-                <p className="mt-2 text-sm text-neutral-500">Compare the example to this problem and look for the shared structure.</p>
+                <div className="text-xs font-bold uppercase tracking-wider text-neutral-400">Practice question</div>
               </div>
-              <MathText className="p-4 rounded-2xl border bg-neutral-50 font-mono">{sampleProblem}</MathText>
+              <MathText className="p-4 rounded-2xl border bg-neutral-50 font-mono">{practiceProblem}</MathText>
+              <Button className="w-full rounded-xl" variant={showPracticeSolution ? "secondary" : "outline"} onClick={() => setShowPracticeSolution(true)}>
+                See solution
+              </Button>
             </div>
           ),
-          messages: [
-            { role: "user", text: "Show me a related example." },
-            { role: "assistant", text: "Use this related example: $\\int \\frac{x+5}{x(x+2)} \\, dx$. It is related because it is a rational function with a factored denominator and a proper fraction." },
-            { role: "assistant", text: "The transferable structure is to write $\\frac{x+5}{x(x+2)}$ as $\\frac{A}{x}+\\frac{B}{x+2}$, then use coefficient matching after clearing denominators." },
-            { role: "assistant", text: "Transfer prompt: your original problem has a polynomial part first, then a proper fraction. Once you reach $\\frac{x+3}{x(x+1)}$, what two denominator factors should receive the constants $A$ and $B$?" },
-          ]
+          messages: showPracticeSolution
+            ? [
+                { role: "user", text: "Show me the solution." },
+                { role: "assistant", text: practiceSolution },
+              ]
+            : [
+                { role: "assistant", text: practiceProblem },
+              ]
         };
       case "answer":
         return {
@@ -572,7 +579,7 @@ function SupportStage({ selected, onBack, onStartOver }) {
           ]
         };
     }
-  }, [selected, answerLevel, studentWork]);
+  }, [selected, answerLevel, studentWork, showPracticeSolution]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[400px_1fr] h-[700px]">
@@ -671,7 +678,7 @@ export default function App() {
           <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between bg-white">
             <div className="flex flex-wrap items-center gap-6">
               <StepPill index={1} label="Add problem" active={stepIndex === 1} done={stepIndex > 1} />
-              <StepPill index={2} label="Prepare support" active={stepIndex === 2} done={stepIndex > 2} />
+              <StepPill index={2} label="Start" active={stepIndex === 2} done={stepIndex > 2} />
               <StepPill index={3} label="Choose help type" active={stepIndex === 3} done={stepIndex > 3} />
               <StepPill index={4} label="Guided help" active={stepIndex === 4} done={false} />
             </div>
