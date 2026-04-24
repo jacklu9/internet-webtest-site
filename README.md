@@ -1,62 +1,81 @@
 # AI Math Tutor
 
-This folder is a clean, internet-deployable copy of the local website from `/Users/zijielu/gemini-test/webtest_copy`.
+Final project for **ESE 5430 Human Systems Engineering**.
 
-## What the site does
+## Project Description
 
-It is a frontend-only Vite + React app for a guided math tutoring demo. The site lets a user:
+AI Math Tutor is a web-based prototype that explores how an AI tutoring interface can guide students toward more structured and learning-oriented math support. Instead of asking users to write an open-ended prompt, the interface organizes the tutoring interaction into a sequence of clear steps: add a math problem, start the tutor support process, choose a help type, and review guided tutor feedback.
 
-- paste a math problem
-- preview and analyze the problem structure
-- choose a help mode such as explanation, method choice, worked example, staged answer, or fixing mistakes
-- read math-rendered tutor guidance with KaTeX
+The prototype is designed around the idea that students often need different kinds of help at different moments. Some students may not understand the problem statement, some may need to review the relevant concept, some may want help continuing their own work, and others may need to locate a mistake. The interface therefore separates AI support into six help types:
 
-There is no backend or database. Everything is currently demo content rendered in the browser.
+- Understand the problem
+- Review relevant knowledge
+- Continue my work
+- Try another question
+- Reveal the answer in stages
+- Find my mistake
 
-## Project structure
+This structure is intended to make AI support easier to understand, easier to control, and more aligned with learning than a single general chat box.
 
-- `src/App.jsx`: main multi-step tutor interface
+## Interaction Flow
+
+The prototype follows a four-step workflow:
+
+1. **Add problem**: The user enters or confirms the math problem.
+2. **Start**: The system reviews the problem structure and prepares the support options.
+3. **Choose help type**: The user selects the type of tutoring support that best matches their current learning need.
+4. **Guided help**: The system shows tutor guidance based on the selected help type.
+
+The current demo uses a sample calculus problem involving rational function integration and partial fractions. Math expressions are rendered with KaTeX so that equations appear in readable mathematical notation.
+
+## Human Systems Engineering Focus
+
+This project applies human systems engineering concepts to the design of an AI learning tool. The main design concern is not only whether the system can provide math help, but whether users can understand the interaction structure, form an accurate mental model of what the system is doing, and choose the type of support that fits their goal.
+
+The interface emphasizes:
+
+- Visibility of the current workflow stage
+- Clear action labels and step-by-step progression
+- Recognition-based help choices instead of prompt-writing from memory
+- User control through back, change-help-type, and start-over options
+- Learning-oriented support such as hints, staged answers, mistake review, and practice questions
+
+## Prototype Scope
+
+This is a frontend-only prototype. It demonstrates the intended interaction design and tutoring workflow, but it does not connect to a live AI model, backend server, or database. Tutor responses are prewritten demo content used to support usability evaluation and design discussion.
+
+## Technology
+
+- React
+- Vite
+- Tailwind CSS
+- Framer Motion
+- KaTeX
+- Lucide React icons
+
+## Project Files
+
+- `src/App.jsx`: Main prototype interface and tutoring flow
 - `src/main.jsx`: React entry point
-- `src/index.css`: Tailwind entry styles
-- `index.html`: app shell
-- `dist/`: static build output that can be uploaded directly to a static host
+- `src/index.css`: Tailwind styles
+- `docs/`: Static GitHub Pages build output
+- `index.html`: App shell
 
-## Run locally
+## Running Locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Build
+## Building
 
 ```bash
 npm run build
 ```
 
-## Put it on the internet
+To rebuild the GitHub Pages version in `docs/`:
 
-This project is ready for static hosting. You can deploy it with:
-
-- Vercel: import this folder as a Vite project
-- Netlify: import this folder, build command `npm run build`, publish directory `dist`
-- GitHub Pages / Cloudflare Pages / any static host: upload the contents of `dist/`
-
-## GitHub Pages
-
-This folder now includes a GitHub Actions workflow at `.github/workflows/deploy.yml` that deploys automatically to GitHub Pages when you push to the `main` branch.
-
-To publish it:
-
-1. Create a GitHub repository.
-2. Upload the contents of this folder to that repository.
-3. In GitHub, open `Settings > Pages`.
-4. Set the source to `GitHub Actions`.
-5. Push to `main`.
-
-The Vite config automatically uses the correct GitHub Pages base path during the GitHub Actions build, so assets load from `/<repo-name>/` when deployed.
-
-## Notes
-
-- I removed the unused `/vite.svg` favicon reference so the deployed site does not request a missing file.
-- A prebuilt `dist/` copy is included for direct upload.
+```bash
+npm run deploy-build
+```
