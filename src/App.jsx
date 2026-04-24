@@ -203,7 +203,7 @@ const shortcutOptions = [
   { id: "work", title: "Continue my work", description: "Use this when you have started and want help with the next step.", icon: Lightbulb, color: "bg-amber-50 border-amber-200" },
   { id: "example", title: "See a similar example", description: "Use this to compare with a worked example that uses the same idea.", icon: Search, color: "bg-emerald-50 border-emerald-200" },
   { id: "answer", title: "Reveal the answer in stages", description: "Use this when you want a hint, an outline, worked steps, or the final answer.", icon: FileText, color: "bg-slate-50 border-slate-200" },
-  { id: "wrong", title: "Fix my attempt", description: "Use this when you want to find the first mistake and repair your work.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
+  { id: "wrong", title: "Find my mistake", description: "Use this when you know your answer is wrong and want help finding where your work first went off track.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
 ];
 
 const sampleProblem = "Evaluate $\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx$.";
@@ -443,10 +443,19 @@ function SupportStage({ selected, onBack, onStartOver }) {
   useEffect(() => {
     switch (selected) {
       case "work":
-        setStudentWork("I think partial fractions are involved, but I am not sure whether to start with\n$\\frac{x^2+2x+3}{x(x+1)} = \\frac{A}{x}+\\frac{B}{x+1}$\nor first rewrite it as\n$1+\\frac{x+3}{x(x+1)}$.");
+        setStudentWork(
+          "$\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx = \\int \\left(1+\\frac{3}{x}-\\frac{2}{x+1}\\right) \\, dx$"
+        );
         break;
       case "wrong":
-        setStudentWork("$\\frac{x^2+2x+3}{x(x+1)} = \\frac{A}{x}+\\frac{B}{x+1}$\n$x^2+2x+3 = A(x+1)+Bx$");
+        setStudentWork(
+          "$\\frac{x^2+2x+3}{x(x+1)} = \\frac{A}{x}+\\frac{B}{x+1}$\n" +
+          "$x^2+2x+3 = A(x+1)+Bx$\n" +
+          "$A+B=2,\\ A=3,\\ B=-1$\n" +
+          "$\\frac{x^2+2x+3}{x(x+1)} = \\frac{3}{x}-\\frac{1}{x+1}$\n" +
+          "$\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx = \\int \\left(\\frac{3}{x}-\\frac{1}{x+1}\\right) dx$\n" +
+          "$= 3x - \\frac{1}{2}(x+1)^2$"
+        );
         break;
       default:
         setStudentWork("");
@@ -497,10 +506,11 @@ function SupportStage({ selected, onBack, onStartOver }) {
           title: "Continue my work",
           left: <MathPreviewInput value={studentWork} onChange={setStudentWork} label="My work so far" placeholder="Type your idea, your current line, or the step where you are blocked." helper="You can type work or upload a photo." />,
           messages: [
-            { role: "user", text: studentWork || "$\\frac{x^2+2x+3}{x(x+1)} = ?$" },
-            { role: "assistant", text: "Your partial fractions idea belongs after the expression is a proper fraction." },
-            { role: "assistant", text: "The next decision is whether the fraction is ready for partial fractions. Since the original numerator and denominator both have degree $2$, rewrite it first as $1+\\frac{x+3}{x(x+1)}$." },
-            { role: "assistant", text: "Now continue only with the proper fraction: $\\frac{x+3}{x(x+1)}=\\frac{A}{x}+\\frac{B}{x+1}$. Your next move is to clear denominators." },
+            { role: "user", text: studentWork || "$\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx = \\int \\left(1+\\frac{3}{x}-\\frac{2}{x+1}\\right) \\, dx$" },
+            { role: "assistant", text: "This setup is ready for the integration step. The partial fraction decomposition is already complete, so now you can integrate each term separately." },
+            { role: "assistant", text: "Split it term by term:\n$$\\int \\left(1+\\frac{3}{x}-\\frac{2}{x+1}\\right) dx = \\int 1 \\, dx + 3\\int \\frac{1}{x} \\, dx - 2\\int \\frac{1}{x+1} \\, dx$$" },
+            { role: "assistant", text: "Use these formulas:\n$$\\int 1 \\, dx = x + C, \\quad \\int \\frac{1}{x} \\, dx = \\ln|x| + C, \\quad \\int \\frac{1}{x+a} \\, dx = \\ln|x+a| + C$$" },
+            { role: "assistant", text: "So your next line can be:\n$$x + 3\\ln|x| - 2\\ln|x+1| + C$$" },
           ]
         };
       case "example":
@@ -551,13 +561,14 @@ function SupportStage({ selected, onBack, onStartOver }) {
       case "wrong":
       default:
         return {
-          title: "Fix my attempt",
-          left: <MathPreviewInput value={studentWork} onChange={setStudentWork} label="My incorrect attempt" placeholder="Paste the work you think went wrong, including the first line you are unsure about." helper="Focus on the first error instead of replacing the whole solution." />,
+          title: "Find my mistake",
+          left: <MathPreviewInput value={studentWork} onChange={setStudentWork} label="My submitted work" placeholder="Paste the solution you turned in so we can find where it first went off track." helper="Use this to review the work that was marked wrong and locate the first mistake." />,
           messages: [
             { role: "user", text: studentWork || "$\\frac{x^2+2x+3}{x(x+1)} = \\frac{A}{x}+\\frac{B}{x+1}$" },
-            { role: "assistant", text: "The first mistake is trying to apply partial fractions directly to $\\frac{x^2+2x+3}{x(x+1)}$." },
-            { role: "assistant", text: "That setup is not appropriate yet because the numerator and denominator have the same degree. Partial fractions should be applied after the rational expression is proper, meaning the numerator degree is lower than the denominator degree." },
-            { role: "assistant", text: "Repair step: first rewrite $\\frac{x^2+2x+3}{x^2+x}$ as $1+\\frac{x+3}{x(x+1)}$. Then apply partial fractions only to $\\frac{x+3}{x(x+1)}$." },
+            { role: "assistant", text: "The first mistake happens at the partial fraction setup. You applied partial fractions directly to $\\frac{x^2+2x+3}{x(x+1)}$, but that fraction is not proper because the numerator and denominator have the same degree." },
+            { role: "assistant", text: "Because of that, the coefficients you found and the rewritten integrand are based on the wrong expression. You also integrated $\\frac{3}{x}$ and $\\frac{1}{x+1}$ as if they were polynomial terms, which is why the antiderivative became $3x-\\frac{1}{2}(x+1)^2$ instead of logarithms." },
+            { role: "assistant", text: "Repair it in this order:\n$$\\frac{x^2+2x+3}{x(x+1)} = 1+\\frac{x+3}{x(x+1)}$$\nThen decompose only the proper fraction:\n$$\\frac{x+3}{x(x+1)} = \\frac{3}{x}-\\frac{2}{x+1}$$" },
+            { role: "assistant", text: "Now integrate the corrected form term by term:\n$$\\int \\left(1+\\frac{3}{x}-\\frac{2}{x+1}\\right) dx = x+3\\ln|x|-2\\ln|x+1|+C$$\nNotice the final answer also needs the constant of integration." },
           ]
         };
     }
