@@ -332,7 +332,7 @@ function AnalyzeStage({ onNext, onBack }) {
     <div className="mx-auto max-w-3xl">
       <Card className="rounded-3xl shadow-sm">
         <CardHeader>
-            <CardTitle>2. Start</CardTitle>
+            <CardTitle>2. Prepare support</CardTitle>
             <p className="text-sm text-neutral-500">
               Checking the problem structure and useful math ideas.
             </p>
@@ -340,7 +340,7 @@ function AnalyzeStage({ onNext, onBack }) {
         <CardContent className="space-y-5">
           <div>
             <div className="mb-2 flex items-center justify-between text-sm">
-              <span className="font-medium">Starting tutor support</span>
+              <span className="font-medium">Preparing support choices</span>
               <span className="text-neutral-500">{progress}%</span>
             </div>
             <Progress value={progress} className="h-3" />
@@ -665,7 +665,7 @@ export default function App() {
 
   const stageStatus = {
     upload: "Current step: add or check the problem.",
-    analyze: "Current step: starting tutor support.",
+    analyze: "Current step: preparing learning support.",
     options: "Current step: choose the help type that matches your state.",
     support: "Current step: use guided help, change help type, or start over.",
   }[stage];
@@ -679,7 +679,7 @@ export default function App() {
           <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between bg-white">
             <div className="flex flex-wrap items-center gap-6">
               <StepPill index={1} label="Add problem" active={stepIndex === 1} done={stepIndex > 1} />
-              <StepPill index={2} label="Start" active={stepIndex === 2} done={stepIndex > 2} />
+              <StepPill index={2} label="Prepare support" active={stepIndex === 2} done={stepIndex > 2} />
               <StepPill index={3} label="Choose help type" active={stepIndex === 3} done={stepIndex > 3} />
               <StepPill index={4} label="Guided help" active={stepIndex === 4} done={false} />
             </div>
