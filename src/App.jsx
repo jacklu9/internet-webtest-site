@@ -203,7 +203,7 @@ const shortcutOptions = [
   { id: "work", title: "Continue my work", description: "Use this when you have started and want help with the next step.", icon: Lightbulb, color: "bg-amber-50 border-amber-200" },
   { id: "practice", title: "Try another question", description: "Use this to get a related practice question.", icon: Pencil, color: "bg-emerald-50 border-emerald-200" },
   { id: "answer", title: "Reveal the answer in stages", description: "Use this when you want a hint, an outline, worked steps, or the final answer.", icon: FileText, color: "bg-slate-50 border-slate-200" },
-  { id: "wrong", title: "Find my mistake", description: "Use this when you know your answer is wrong and want help finding where your work first went off track.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
+  { id: "wrong", title: "Find my mistake", description: "Use this when you know your answer is wrong but are not sure where or why it is wrong.", icon: CheckCircle2, color: "bg-cyan-50 border-cyan-200" },
 ];
 
 const sampleProblem = "Evaluate $\\int \\frac{x^2+2x+3}{x(x+1)} \\, dx$.";
